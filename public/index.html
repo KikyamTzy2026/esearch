@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Search via Team Pitipiwpiw</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--text:#111827;--muted:#6b7280;--border:#e5e7eb;
+  --accent:#2563eb;--accent-soft:#eff6ff;--accent-text:#1d4ed8;--mark:#fde68a;
+  --warn-bg:#fffbeb;--warn-text:#b45309;--warn-border:#fde68a;--bad:#b91c1c;--bad-bg:#fef2f2;
+}
+:root[data-theme="dark"]{
+  --bg:#0b0f17;--card:#111827;--text:#f3f4f6;--muted:#9ca3af;--border:#1f2937;
+  --accent:#3b82f6;--accent-soft:#172554;--accent-text:#93c5fd;--mark:#854d0e;
+  --warn-bg:#2a1f07;--warn-text:#fcd34d;--warn-border:#5b4210;--bad:#fca5a5;--bad-bg:#3b1414;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--border)}
+.bar{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.1}
+.brand b{font-size:15px}.brand span{font-size:11px;color:var(--muted)}
+.spacer{flex:1}
+.btn{border:1px solid var(--border);background:var(--card);color:var(--text);padding:7px 12px;border-radius:8px;font-size:13px;cursor:pointer}
+.btn:hover{background:var(--accent-soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.hero{text-align:center;margin:8px 0 18px}
+.hero h1{margin:0;font-size:26px}
+.hero p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.searchbox{position:relative;max-width:760px;margin:0 auto}
+.searchbox input{width:100%;padding:14px 16px 14px 44px;font-size:16px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);outline:none}
+.searchbox input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.searchbox svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0 4px}
+.chip{border:1px solid var(--border);background:var(--card);color:var(--text);padding:5px 12px;border-radius:999px;font-size:12px;cursor:pointer}
+.chip:hover{background:var(--accent-soft);color:var(--accent-text)}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;justify-content:center;margin:16px 0 8px}
+.filters label{font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:3px;text-transform:uppercase;letter-spacing:.04em}
+.filters select,.filters input{padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-size:13px;min-width:130px}
+.meta{display:flex;justify-content:space-between;align-items:center;margin:14px 2px 10px;color:var(--muted);font-size:13px;flex-wrap:wrap;gap:6px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.card:hover{border-color:var(--accent)}
+.card h3{margin:0 0 6px;font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.badge{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-text)}
+.badge.err{background:var(--bad-bg);color:var(--bad)}
+.badge.plain{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.comments{font-size:13px;color:var(--muted);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.foot{margin-top:8px;font-size:12px;color:var(--muted)}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+.pager{display:flex;gap:8px;justify-content:center;align-items:center;margin:18px 0;font-size:13px;flex-wrap:wrap}
+.empty{text-align:center;color:var(--muted);padding:50px 10px;border:1px dashed var(--border);border-radius:12px}
+dialog{border:none;border-radius:14px;padding:0;width:min(820px,94vw);max-height:90vh;background:var(--card);color:var(--text);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dhead{display:flex;justify-content:space-between;gap:10px;align-items:start;padding:16px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card)}
+.dbody{padding:14px 18px 20px;overflow:auto;max-height:calc(90vh - 70px)}
+.refonly{display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:3px 9px;border-radius:6px;background:var(--warn-bg);color:var(--warn-text);border:1px solid var(--warn-border);margin-bottom:6px}
+dl{margin:0}
+.row{display:grid;grid-template-columns:170px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+.row dt{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding-top:2px}
+.row dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.similar h4{margin:20px 0 8px}
+.sim{display:block;width:100%;text-align:left;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font:inherit}
+.sim:hover{border-color:var(--accent)}
+.sim small{display:block;color:var(--muted);margin-top:3px}
+#banner .box,#saved .box{background:var(--accent-soft);color:var(--accent-text);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:13px}#banner .box.bad{background:var(--bad-bg);color:var(--bad)}#banner .box button,#saved .box button{margin-left:8px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;z-index:50;max-width:90vw}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:600px){.row{grid-template-columns:1fr;gap:2px}}
+body.locked>header,body.locked>main,body.locked>footer{display:none}
+#login{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#login[hidden]{display:none!important}
+#loginForm{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;width:min(360px,100%);display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,.12)}
+#loginForm .lbrand{display:flex;flex-direction:column;line-height:1.15}
+#loginForm .lbrand b{font-size:18px}#loginForm .lbrand span{font-size:12px;color:var(--muted)}
+#loginForm h2{margin:6px 0 0;font-size:16px}
+#loginForm label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+#loginForm input{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;text-transform:none;letter-spacing:0;outline:none}
+#loginForm input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+#loginForm .btn{padding:10px 12px;font-size:14px;margin-top:2px}
+#loginMsg{color:var(--bad);font-size:13px;min-height:18px}
+</style>
+</head>
+<body class="locked">
+<div id="login"><form id="loginForm" autocomplete="on">
+  <div class="lbrand"><b>E-Search</b><span>via Team Pitipiwpiw · by Makoy ++</span></div>
+  <h2>Sign in</h2>
+  <label>Username<input id="lu" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+  <label>Password<input id="lp" name="password" type="password" autocomplete="current-password" required></label>
+  <div id="loginMsg" role="alert"></div>
+  <button class="btn primary" id="loginBtn" type="submit">Sign in</button>
+</form></div>
+<header><div class="bar">
+  <div class="brand"><b>E-Search</b><span>via Team Pitipiwpiw · by Makoy ++</span></div>
+  <div class="spacer"></div>
+  <span id="count" style="font-size:12px;color:var(--muted)">Loading…</span>
+  <button class="btn" id="addBtn" title="Add records from another .txt file">+ Add .txt file</button>
+  <button class="btn" id="pasteBtn" title="Paste rows copied from Excel">📋 Paste new notes</button>
+  <input type="file" id="fileIn" accept=".txt,.tsv,text/plain" hidden="" multiple="">
+  <button class="btn" id="logoutBtn" title="Sign out">Log out</button>
+  <button class="btn" id="themeBtn" aria-label="Toggle dark mode">🌓</button>
+</div></header>
+
+<main>
+  <div class="hero">
+    <h1>E-Search via Team Pitipiwpiw</h1>
+    <p>Find previous processing records in seconds. Records are saved in a secure shared database — anything you add is visible to the whole team.</p>
+  </div>
+
+  <div class="searchbox">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+    <input id="q" type="search" placeholder="Search documents, playbooks, comments, processors, file numbers…" autofocus="" autocomplete="off">
+  </div>
+  <div class="chips" id="chips"></div>
+
+  <div class="filters">
+    <label>State<select id="fState"><option value="">All</option></select></label>
+    <label>Error<select id="fError"><option value="">All</option><option value="Y">Yes</option><option value="N">No / none</option></select></label>
+    <label>Processor<input id="fProc" placeholder="e.g. GREG" list="procList"></label>
+    <datalist id="procList"></datalist>
+    <label>Keyword<input id="fKey" placeholder="e.g. Summons"></label>
+    <button class="btn" id="clearBtn">Clear</button>
+  </div>
+
+  <div id="saved"></div>
+  <div id="banner"></div>
+  <div class="meta"><span id="status"></span><span>Historical records are references only — not the current official procedure.</span></div>
+  <div id="results"></div>
+  <div class="pager" id="pager"></div>
+</main>
+
+<footer>E-Search via Team Pitipiwpiw · by Makoy ++</footer>
+
+<dialog id="dlg"><div class="dhead"><div><span class="refonly">Historical Record — Reference Only</span><div id="dTitle" style="font-size:18px;font-weight:600;overflow-wrap:anywhere"></div></div><button class="btn" id="dClose">Close ✕</button></div><div class="dbody" id="dBody"></div></dialog>
+
+<dialog id="pasteDlg">
+  <div class="dhead">
+    <div style="font-size:18px;font-weight:600">Paste new notes</div>
+    <button class="btn" id="pasteClose">Close ✕</button>
+  </div>
+  <div class="dbody">
+    <p style="font-size:13px;color:var(--muted);margin-top:0">
+      Copy cells from Excel (select the rows, <b>Ctrl+C</b>) and paste them below with <b>Ctrl+V</b>.
+      Excel copies with Tab between columns automatically — no need to save a .txt file first.
+    </p>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">
+      First row is
+      <select id="pasteHeaderMode">
+        <option value="auto">Auto-detect (recommended)</option>
+        <option value="header">Column names (File Number, Borrower Name, …)</option>
+        <option value="data">Already data — no header row</option>
+      </select>
+    </label>
+    <textarea id="pasteArea" placeholder="Paste copied Excel rows here…" style="width:100%;min-height:220px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:13px/1.4 ui-monospace,Consolas,monospace;resize:vertical"></textarea>
+    <div id="pastePreview" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn" id="pasteCancel">Cancel</button>
+      <button class="btn primary" id="pasteAddBtn" disabled="">Add these records</button>
+    </div>
+  </div>
+</dialog>
+<script>
+"use strict";
+/* ---------- Parsing (same rules as the web app) ---------- */
+var COLUMN_MAP={"documents/subject":"documents","document/subject":"documents",subject:"documents","documents / subject":"documents","selected document name in playbook":"playbookDocName","selected document name (playbook)":"playbookDocName","file number":"fileNumber",filenumber:"fileNumber","borrower name":"borrowerName",borrowername:"borrowerName",borrower:"borrowerName",state:"state",keyword:"keyword",documents:"documents",document:"documents","playbook doc name":"playbookDocName","playbook doc name selected document name":"playbookDocName",playbook:"playbookDocName",playbook_doc_name:"playbookDocName","selected document name":"selectedDocumentName","selected document":"selectedDocumentName",selecteddocumentname:"selectedDocumentName",comments:"comments",comment:"comments","processor name":"processorName",processorname:"processorName",date:"date","date (est)":"date",processor:"processor","time started":"timeStarted",timestarted:"timeStarted","time ended":"timeEnded",timeended:"timeEnded",minutes:"minutes","initial auditor":"initialAuditor","partial auditor":"initialAuditor",auditor:"initialAuditor",initialauditor:"initialAuditor","final auditor":"finalAuditor",finalauditor:"finalAuditor","error y/n":"error",error:"error","error details":"errorDetails",errordetails:"errorDetails"};
+var LAYOUTS={
+ 14:["fileNumber","borrowerName","state","documents","comments","processorName","date","processor","timeStarted","timeEnded","minutes","initialAuditor","error","errorDetails"],
+ 16:["fileNumber","borrowerName","state","keyword","documents","playbookDocName","comments","processorName","date","processor","timeStarted","timeEnded","minutes","finalAuditor","error","errorDetails"],
+ 17:["fileNumber","borrowerName","state","keyword","documents","playbookDocName","comments","processorName","date","processor","timeStarted","timeEnded","minutes","initialAuditor","finalAuditor","error","errorDetails"],
+ 18:["fileNumber","borrowerName","state","keyword","documents","playbookDocName","comments","processorName","date","processor","timeStarted","timeEnded","minutes","initialAuditor","finalAuditor","error","errorDetails",null]
+};
+var DEFAULT_ORDER=["fileNumber","borrowerName","state","keyword","documents","playbookDocName","selectedDocumentName","comments","processorName","date","processor","timeStarted","timeEnded","minutes","initialAuditor","finalAuditor","error","errorDetails"];
+
+function normHeader(h){return String(h).toLowerCase().trim().replace(/["']/g,"").replace(/\s+/g," ");}
+function clean(v){if(v==null)return null;var s=String(v).trim();return(!s||s==="-")?null:s;}
+function parseDate(v){
+  var s=clean(v);if(!s)return null;
+  var m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2}|\d{4})$/);
+  if(m){var mo=+m[1],d=+m[2],y=+m[3];if(y<100)y+=2000;if(mo>=1&&mo<=12&&d>=1&&d<=31)return Date.UTC(y,mo-1,d);return null;}
+  var t=Date.parse(s);return isNaN(t)?null:t;
+}
+function parseDelimited(text,delim){
+  var rows=[],row=[],field="",i=0,n=text.length,start=true;
+  function endField(){row.push(field);field="";start=true;}
+  function endRow(){endField();rows.push(row);row=[];}
+  while(i<n){
+    var ch=text[i];
+    if(start&&ch==='"'){
+      i++;
+      while(i<n){
+        if(text[i]==='"'){
+          if(text[i+1]==='"'){field+='"';i+=2;continue;}
+          var nx=text[i+1];
+          if(nx===undefined||nx===delim||nx==="\n"||nx==="\r"){i++;break;}
+          field+='"';i++;continue;
+        }
+        field+=text[i];i++;
+      }
+      start=false;continue;
+    }
+    if(ch===delim){endField();i++;continue;}
+    if(ch==="\r"||ch==="\n"){if(ch==="\r"&&text[i+1]==="\n")i++;endRow();i++;continue;}
+    field+=ch;start=false;i++;
+  }
+  if(field!==""||row.length>0)endRow();
+  return rows;
+}
+function isHeaderRow(cells){var c=0;for(var i=0;i<cells.length;i++)if(COLUMN_MAP[normHeader(cells[i])])c++;return c>=4;}
+
+function parseTxt(text){
+  text=text.replace(/^\uFEFF/,"");
+  if(!text.trim())return{records:[],invalid:0,total:0,headers:0,cols:0};
+  var sample=text.slice(0,20000),delim="\t";
+  if(sample.indexOf("\t")<0){if(sample.indexOf("    ")>=0)delim="    ";else if(sample.indexOf("|")>=0)delim="|";}
+  var rows;
+  if(delim==="\t")rows=parseDelimited(text,"\t");
+  else rows=text.replace(/\r\n?/g,"\n").split("\n").filter(function(l){return l.trim();}).map(function(l){return l.trimEnd().split(delim);});
+  rows=rows.filter(function(r){return r.some(function(c){return c.trim();});});
+  var records=[],invalid=0,map=null,total=0,headers=0,dupes=0;
+  for(var idx=0;idx<rows.length;idx++){
+    var parts=rows[idx].map(function(p){return p.trim();});
+    if(isHeaderRow(parts)){headers++;map=parts.map(function(h){return COLUMN_MAP[normHeader(h)]||null;});continue;}
+    var m=map||LAYOUTS[parts.length]||DEFAULT_ORDER,rec={};total++;
+    for(var i=0;i<m.length;i++){
+      var f=m[i];if(!f||i>=parts.length)continue;
+      if(f==="date")rec.date=parseDate(parts[i]);
+      else if(f==="minutes"){var k=parseInt(parts[i],10);rec.minutes=isNaN(k)?null:k;}
+      else rec[f]=clean(parts[i]);
+    }
+    if(!map&&!rec.documents&&parts.length>=2&&parts.length<=5){
+      rec.documents=clean(parts[0]);
+      if(parts[1]&&parts[1]!=="-")rec.playbookDocName=clean(parts[1]);
+      if(parts[2])rec.comments=clean(parts[2]);
+      if(parts[3]){rec.processorName=clean(parts[3]);rec.processor=clean(parts[3]);}
+    }
+    // Some rows lack an empty auditor cell, shifting the Y/N flag into "Final Auditor"
+    if(!rec.error&&rec.finalAuditor&&/^[YN]$/i.test(rec.finalAuditor)&&rec.initialAuditor){
+      rec.error=rec.finalAuditor.toUpperCase();rec.finalAuditor=rec.initialAuditor;rec.initialAuditor=null;
+    }
+    if(/^\s*duplicate file\b/i.test(rec.comments||"")){dupes++;continue;} /* never keep "Duplicate file. Moved to Duplicate folder." records */
+    if(!rec.documents&&!rec.comments&&!rec.processorName&&!rec.processor){invalid++;continue;}
+    records.push(rec);
+  }
+  return{records:records,invalid:invalid,dupes:dupes,total:total,headers:headers,cols:rows.length?rows[0].length:0};
+}
+
+/* ---------- Data ---------- */
+var FIELDS=[["fileNumber","File Number"],["borrowerName","Borrower Name"],["state","State"],["keyword","Keyword"],["documents","Documents"],["playbookDocName","Playbook Doc Name / Selected Document"],["selectedDocumentName","Selected Document Name"],["comments","Comments"],["processorName","Processor Name"],["date","Date (EST)"],["processor","Processor"],["timeStarted","Time Started"],["timeEnded","Time Ended"],["minutes","Minutes"],["initialAuditor","Initial / Partial Auditor"],["finalAuditor","Final Auditor"],["error","Error (Y/N)"],["errorDetails","Error Details"]];
+var ALL=[],seen=Object.create(null);
+function keyOf(r){return[r.fileNumber,r.documents,r.date,r.timeStarted,r.processor||r.processorName,(r.comments||"").slice(0,60)].map(function(x){return String(x||"").toLowerCase();}).join("|");}
+function prep(r){
+  r._h=[r.fileNumber,r.borrowerName,r.state,r.keyword,r.documents,r.playbookDocName,r.selectedDocumentName,r.comments,r.processorName,r.processor,r.errorDetails].filter(Boolean).join(" \u0001 ").toLowerCase();
+  r._id=ALL.length;
+}
+var batchNo=0,onlyNew=0;
+function addRecords(list,dedupe,batch){
+  var added=0,skipped=0,recs=[];
+  list.forEach(function(r){
+    var k=keyOf(r);
+    if(dedupe&&seen[k]){skipped++;return;}
+    seen[k]=1;prep(r);r._b=batch||0;ALL.push(r);recs.push(r);added++;
+  });
+  return{added:added,skipped:skipped,recs:recs};
+}
+
+/* ---------- Shared database (saved on the server) ---------- */
+function api(path,opt){
+  opt=opt||{};opt.credentials="same-origin";
+  if(opt.body&&typeof opt.body!=="string"){opt.body=JSON.stringify(opt.body);opt.headers={"Content-Type":"application/json"};}
+  return fetch(path,opt).then(function(r){
+    if(r.status===401&&path.indexOf("/api/login")<0&&path.indexOf("/api/me")<0){showLogin("Your session ended. Please sign in again.");var ae=new Error("auth");ae.status=401;throw ae;}
+    return r.json().catch(function(){return{};}).then(function(j){
+      if(!r.ok){var e=new Error(j.error||("Server error ("+r.status+")"));e.status=r.status;throw e;}
+      return j;
+    });
+  });
+}
+var KEEP=["fileNumber","borrowerName","state","keyword","documents","playbookDocName","selectedDocumentName","comments","processorName","processor","timeStarted","timeEnded","initialAuditor","finalAuditor","error","errorDetails","date","minutes"];
+var UP={},lastUp=null,pending=0,saveQueue=Promise.resolve();
+function upId(batch){return UP[batch]||(UP[batch]=Date.now().toString(36)+Math.random().toString(36).slice(2,8));}
+function saveRecs(recs,batch){
+  var id=upId(batch);
+  var clean=recs.map(function(r){var o={};KEEP.forEach(function(k){if(r[k]!=null)o[k]=r[k];});return o;});
+  pending++;refreshSaved();
+  saveQueue=saveQueue.then(function(){
+    var chain=Promise.resolve(),added=0;
+    for(var i=0;i<clean.length;i+=1500)(function(part){
+      chain=chain.then(function(){return api("/api/records",{method:"POST",body:{upload:id,records:part}}).then(function(j){added+=j.added;});});
+    })(clean.slice(i,i+1500));
+    return chain.then(function(){
+      lastUp={id:id,added:(lastUp&&lastUp.id===id?lastUp.added:0)+added};
+    });
+  }).catch(function(e){
+    if(e.message!=="auth")toast("⚠ Could not save to the database: "+e.message+" — the records are only visible on this screen.");
+  }).then(function(){pending--;refreshSaved();});
+  return saveQueue;
+}
+function refreshSaved(){
+  if(pending>0){$("saved").innerHTML='<div class="box">Saving to the shared database…</div>';return;}
+  if(!lastUp){$("saved").innerHTML="";return;}
+  $("saved").innerHTML='<div class="box">✅ '+lastUp.added.toLocaleString()+' new record(s) saved to the shared database — everyone on the team can search them now. <button class="btn" id="undoUp">Undo this upload</button></div>';
+  $("undoUp").onclick=function(){
+    if(!confirm("Remove the records from this upload from the database?"))return;
+    api("/api/records?upload="+encodeURIComponent(lastUp.id),{method:"DELETE"}).then(function(j){
+      toast("Removed "+j.deleted.toLocaleString()+" record(s).");lastUp=null;setTimeout(function(){location.reload();},700);
+    }).catch(function(e){toast("Could not undo: "+e.message);});
+  };
+}
+
+/* ---------- UI ---------- */
+var $=function(id){return document.getElementById(id);};
+var PAGE=25,page=1,current=[],lastTokens=[];
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function reEsc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
+function hl(text,tokens){
+  if(!text)return"";
+  if(!tokens.length)return esc(text);
+  var re=new RegExp("("+tokens.map(reEsc).join("|")+")","gi");
+  return text.split(re).map(function(p,i){return i%2?"<mark>"+esc(p)+"</mark>":esc(p);}).join("");
+}
+function fmtDate(t){return t==null?"—":new Date(t).toLocaleDateString("en-US",{timeZone:"UTC",year:"numeric",month:"short",day:"numeric"});}
+function toast(msg){var t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},4000);}
+
+function score(r,q,tokens){
+  var s=0,lc=function(x){return x?x.toLowerCase():"";};
+  var d=lc(r.documents),p=lc(r.playbookDocName),sd=lc(r.selectedDocumentName),k=lc(r.keyword),c=lc(r.comments);
+  if(q){
+    if(d===q)s+=100;else if(d.indexOf(q)>=0)s+=50;
+    if(p===q)s+=90;else if(p.indexOf(q)>=0)s+=40;
+    if(sd===q)s+=80;else if(sd.indexOf(q)>=0)s+=35;
+    if(k===q)s+=30;else if(k.indexOf(q)>=0)s+=15;
+    if(c.indexOf(q)>=0)s+=10;
+  }
+  tokens.forEach(function(t){if(d.indexOf(t)>=0)s+=4;if(p.indexOf(t)>=0)s+=3;if(k.indexOf(t)>=0)s+=2;});
+  return s;
+}
+function run(){
+  var q=$("q").value.trim().toLowerCase();
+  var tokens=q?q.split(/\s+/).filter(Boolean):[];
+  lastTokens=q?[q].concat(tokens.filter(function(x){return x.length>=3&&x!==q;})).sort(function(a,b){return b.length-a.length;}):[];
+  var st=$("fState").value,er=$("fError").value,pr=$("fProc").value.trim().toLowerCase(),ky=$("fKey").value.trim().toLowerCase();
+  var out=[];
+  for(var i=0;i<ALL.length;i++){
+    var r=ALL[i];
+    if(onlyNew&&r._b!==onlyNew)continue;
+    if(st&&(r.state||"").toUpperCase()!==st)continue;
+    if(er==="Y"&&(r.error||"").toUpperCase()!=="Y")continue;
+    if(er==="N"&&(r.error||"").toUpperCase()==="Y")continue;
+    if(pr&&((r.processor||"").toLowerCase().indexOf(pr)<0&&(r.processorName||"").toLowerCase().indexOf(pr)<0))continue;
+    if(ky&&(r.keyword||"").toLowerCase().indexOf(ky)<0)continue;
+    if(tokens.length){var ok=true;for(var j=0;j<tokens.length;j++){if(r._h.indexOf(tokens[j])<0){ok=false;break;}}if(!ok)continue;r._s=score(r,q,tokens);}
+    else r._s=0;
+    out.push(r);
+  }
+  out.sort(function(a,b){return(b._s-a._s)||((b.date||0)-(a.date||0))||(b._id-a._id);});
+  current=out;page=1;render();
+}
+function render(){
+  var total=current.length,pages=Math.max(1,Math.ceil(total/PAGE));
+  if(page>pages)page=pages;
+  var slice=current.slice((page-1)*PAGE,page*PAGE);
+  var q=$("q").value.trim();
+  var filtered=q||$("fState").value||$("fError").value||$("fProc").value.trim()||$("fKey").value.trim();
+  $("status").textContent=total?(filtered?total.toLocaleString()+" result"+(total===1?"":"s"):"Showing latest records — "+total.toLocaleString()+" total"):"";
+  if(!total){
+    $("results").innerHTML='<div class="empty"><b>No historical records found.</b><br>Try another document name, keyword, processor, or comment.</div>';
+    $("pager").innerHTML="";return;
+  }
+  $("results").innerHTML=slice.map(function(r){
+    var b=[];
+    if(r.keyword)b.push('<span class="badge">'+hl(r.keyword,lastTokens)+"</span>");
+    if(r.state)b.push('<span class="badge plain">'+esc(r.state)+"</span>");
+    if(r.playbookDocName)b.push('<span class="badge plain">Playbook: '+hl(r.playbookDocName,lastTokens)+"</span>");
+    if((r.error||"").toUpperCase()==="Y")b.push('<span class="badge err">Error</span>');
+    return'<div class="card" data-id="'+r._id+'"><h3>'+hl(r.documents||r.playbookDocName||"Historical Record",lastTokens)+'</h3><div class="badges">'+b.join("")+'</div><div class="comments">'+hl(r.comments||"",lastTokens)+'</div><div class="foot">'+esc(r.processorName||r.processor||"—")+" · "+fmtDate(r.date)+(r.fileNumber?" · File "+esc(r.fileNumber):"")+(r.borrowerName?" · "+esc(r.borrowerName):"")+"</div></div>";
+  }).join("");
+  $("pager").innerHTML=pages>1?'<button class="btn" id="pPrev"'+(page<=1?" disabled":"")+'>← Prev</button><span>Page '+page+" of "+pages.toLocaleString()+'</span><button class="btn" id="pNext"'+(page>=pages?" disabled":"")+'>Next →</button>':"";
+  if($("pPrev"))$("pPrev").onclick=function(){page--;render();window.scrollTo({top:0,behavior:"smooth"});};
+  if($("pNext"))$("pNext").onclick=function(){page++;render();window.scrollTo({top:0,behavior:"smooth"});};
+}
+function openRecord(id){
+  var r=ALL[id];if(!r)return;
+  $("dTitle").textContent=r.documents||r.playbookDocName||"Historical Record";
+  var rows=FIELDS.map(function(f){
+    var v=r[f[0]];if(v==null||v==="")return"";
+    if(f[0]==="date")v=fmtDate(v);
+    return'<div class="row"><dt>'+f[1]+"</dt><dd>"+esc(v)+"</dd></div>";
+  }).join("");
+  var sim=[],dd=(r.documents||"").toLowerCase(),pp=(r.playbookDocName||"").toLowerCase(),kk=(r.keyword||"").toLowerCase();
+  for(var i=0;i<ALL.length&&sim.length<400;i++){
+    var o=ALL[i];if(o._id===id)continue;
+    if((dd&&(o.documents||"").toLowerCase()===dd)||(pp&&(o.playbookDocName||"").toLowerCase()===pp)||(kk&&(o.keyword||"").toLowerCase()===kk))sim.push(o);
+  }
+  sim.sort(function(a,b){return(b.date||0)-(a.date||0);});
+  sim=sim.slice(0,8);
+  var simHtml=sim.length?'<div class="similar"><h4>Similar Previous Records</h4>'+sim.map(function(o){return'<button class="sim" data-id="'+o._id+'">'+esc(o.documents||"—")+"<small>"+esc((o.comments||o.playbookDocName||"—").slice(0,140))+"</small><small>"+esc(o.processorName||o.processor||"—")+" · "+fmtDate(o.date)+"</small></button>";}).join("")+"</div>":"";
+  $("dBody").innerHTML="<dl>"+rows+"</dl>"+simHtml;
+  $("dBody").scrollTop=0;
+  if(!$("dlg").open)$("dlg").showModal();
+}
+function buildFilters(){
+  var sc={},pc={};
+  ALL.forEach(function(r){if(r.state){var s=r.state.toUpperCase();sc[s]=(sc[s]||0)+1;}[r.processor,r.processorName].forEach(function(p){if(p)pc[p.toUpperCase()]=1;});});
+  var cur=$("fState").value;
+  $("fState").innerHTML='<option value="">All</option>'+Object.keys(sc).sort(function(a,b){return sc[b]-sc[a];}).map(function(s){return'<option value="'+esc(s)+'">'+esc(s)+" ("+sc[s].toLocaleString()+")</option>";}).join("");
+  $("fState").value=cur;
+  $("procList").innerHTML=Object.keys(pc).sort().map(function(p){return'<option value="'+esc(p)+'">';}).join("");
+  $("count").textContent=ALL.length.toLocaleString()+" records loaded";
+}
+function debounce(fn,ms){var t;return function(){clearTimeout(t);t=setTimeout(fn,ms);};}
+
+/* ---------- Wire up ---------- */
+var EXAMPLES=["Complaint Package","Certificate Of Title","Notice Of Hearing","Answer And Affirmative Defenses","Motion To Dismiss","Final Summary Judgment"];
+$("chips").innerHTML=EXAMPLES.map(function(t){return'<button class="chip">'+esc(t)+"</button>";}).join("");
+$("chips").onclick=function(e){if(e.target.classList.contains("chip")){$("q").value=e.target.textContent;run();}};
+var deb=debounce(run,180);
+["q","fProc","fKey"].forEach(function(id){$(id).addEventListener("input",deb);});
+["fState","fError"].forEach(function(id){$(id).addEventListener("change",run);});
+$("clearBtn").onclick=function(){onlyNew=0;$("banner").innerHTML="";["q","fProc","fKey"].forEach(function(id){$(id).value="";});$("fState").value="";$("fError").value="";run();$("q").focus();};
+$("results").onclick=function(e){var c=e.target.closest(".card");if(c)openRecord(+c.dataset.id);};
+$("dBody").onclick=function(e){var c=e.target.closest(".sim");if(c)openRecord(+c.dataset.id);};
+$("dClose").onclick=function(){$("dlg").close();};
+$("dlg").addEventListener("click",function(e){if(e.target===$("dlg"))$("dlg").close();});
+$("addBtn").onclick=function(){$("fileIn").click();};
+$("fileIn").onchange=function(){
+  var files=Array.prototype.slice.call($("fileIn").files);$("fileIn").value="";
+  if(!files.length)return;
+  var reports=[],left=files.length,batch=++batchNo,added=0;
+  files.forEach(function(f,fi){
+    var rd=new FileReader();
+    rd.onload=function(){
+      var text=decodeBytes(rd.result),res=parseTxt(text),a=addRecords(res.records,true,batch);
+      added+=a.added;if(a.added>0)saveRecs(a.recs,batch);
+      reports[fi]={name:f.name,total:res.total,headers:res.headers,valid:res.records.length,invalid:res.invalid,dupes:res.dupes,added:a.added,skipped:a.skipped,cols:res.cols,head:text.slice(0,120).replace(/[\t\r\n]+/g," | ")};
+      if(--left===0)finishAdd(reports,added,batch);
+    };
+    rd.onerror=function(){reports[fi]={name:f.name,error:"Could not read this file."};if(--left===0)finishAdd(reports,added,batch);};
+    rd.readAsArrayBuffer(f);
+  });
+};
+function decodeBytes(buf){
+  var u=new Uint8Array(buf);
+  if(u.length>=2&&u[0]===0xFF&&u[1]===0xFE)return new TextDecoder("utf-16le").decode(u.subarray(2));
+  if(u.length>=2&&u[0]===0xFE&&u[1]===0xFF)return new TextDecoder("utf-16be").decode(u.subarray(2));
+  var s=new TextDecoder("utf-8").decode(u);
+  if(s.indexOf("\uFFFD")>=0){try{return new TextDecoder("windows-1252").decode(u);}catch(e){}}
+  return s;
+}
+function finishAdd(reports,added,batch){
+  buildFilters();refreshSaved(null);
+  var html=reports.map(function(r){
+    if(r.error)return"<div><b>"+esc(r.name)+"</b>: "+esc(r.error)+"</div>";
+    var s="<div><b>"+esc(r.name)+"</b>: "+r.total.toLocaleString()+" rows read → <b>"+r.added.toLocaleString()+" new</b>, "+r.skipped.toLocaleString()+" already in the list (duplicates), "+r.invalid.toLocaleString()+" unusable."+(r.dupes?" "+r.dupes.toLocaleString()+' \"Duplicate file\" row(s) ignored.':"");
+    if(!r.total)s+="<br>Nothing was recognised. The file starts with: <i>"+esc(r.head)+"</i><br>Expected tab-separated columns such as File Number, Borrower Name, State, Documents, Comments…";
+    else if(!r.valid&&!r.dupes)s+="<br>None of the rows had usable Documents / Comments / Processor data. The file starts with: <i>"+esc(r.head)+"</i>";
+    else if(!r.added&&r.skipped===r.valid)s+="<br>Every row matches a record that is already loaded.";
+    return s+"</div>";
+  }).join("");
+  var bad=added===0;
+  $("banner").innerHTML='<div class="box'+(bad?" bad":"")+'">'+html+(added?'<div style="margin-top:6px">Showing only the newly added records. <button class="btn" id="showAll">Show all records</button></div>':"")+"</div>";
+  $("q").value="";$("fState").value="";$("fError").value="";$("fProc").value="";$("fKey").value="";
+  onlyNew=added?batch:0;
+  run();
+  if($("showAll"))$("showAll").onclick=function(){onlyNew=0;$("banner").innerHTML="";run();};
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function pastePreviewText(text,mode){
+  var t=text.replace(/^\uFEFF/,"");
+  if(!t.trim())return{ok:false,msg:"Nothing pasted yet."};
+  if(mode==="header"&&t.indexOf("\t")<0&&t.indexOf("    ")<0)
+    return{ok:false,msg:"This doesn't look tab-separated. Make sure you copied whole rows from Excel (select the cells, not just text)."};
+  var res=parseTxt(mode==="header"?t:(mode==="data"?forceNoHeader(t):t));
+  return{ok:true,res:res};
+}
+function forceNoHeader(t){
+  // Temporarily prefix a dummy header-less marker by skipping header detection:
+  // simplest approach — just parse normally; parseTxt already falls back to
+  // column-count layouts when no header row is detected.
+  return t;
+}
+$("pasteBtn").onclick=function(){
+  $("pasteArea").value="";$("pastePreview").textContent="";$("pasteAddBtn").disabled=true;
+  $("pasteHeaderMode").value="auto";
+  $("pasteDlg").showModal();
+  setTimeout(function(){$("pasteArea").focus();},50);
+};
+$("pasteClose").onclick=$("pasteCancel").onclick=function(){$("pasteDlg").close();};
+$("pasteDlg").addEventListener("click",function(e){if(e.target===$("pasteDlg"))$("pasteDlg").close();});
+var pasteDebounce;
+function updatePastePreview(){
+  clearTimeout(pasteDebounce);
+  pasteDebounce=setTimeout(function(){
+    var text=$("pasteArea").value,mode=$("pasteHeaderMode").value;
+    var r=pastePreviewText(text,mode);
+    if(!r.ok){$("pastePreview").textContent=r.msg;$("pasteAddBtn").disabled=true;return;}
+    var res=r.res;
+    if(!res.total){$("pastePreview").textContent="Nothing recognised yet — check that this is tab-separated (copied straight from Excel).";$("pasteAddBtn").disabled=true;return;}
+    $("pastePreview").innerHTML=res.total.toLocaleString()+" row(s) read → "+res.records.length.toLocaleString()+" usable"+(res.invalid?", "+res.invalid.toLocaleString()+" unusable":"")+(res.headers?" (header row detected)":" (no header row — guessed columns from position)");
+    $("pasteAddBtn").disabled=res.records.length===0;
+  },200);
+}
+$("pasteArea").addEventListener("input",updatePastePreview);
+$("pasteHeaderMode").addEventListener("change",updatePastePreview);
+$("pasteAddBtn").onclick=function(){
+  var text=$("pasteArea").value,mode=$("pasteHeaderMode").value;
+  var r=pastePreviewText(text,mode);
+  if(!r.ok||!r.res.records.length)return;
+  var batch=++batchNo,a=addRecords(r.res.records,true,batch);
+  if(a.added>0)saveRecs(a.recs,batch);
+  $("pasteDlg").close();
+  finishAdd([{name:"Pasted notes",total:r.res.total,headers:r.res.headers,valid:r.res.records.length,invalid:r.res.invalid,added:a.added,skipped:a.skipped,cols:r.res.cols,head:text.slice(0,120).replace(/[\t\r\n]+/g," | ")}],a.added,batch);
+};
+
+function setTheme(t){document.documentElement.setAttribute("data-theme",t);try{localStorage.setItem("esearch-theme",t);}catch(e){}}
+$("themeBtn").onclick=function(){setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");};
+(function(){var t=null;try{t=localStorage.getItem("esearch-theme");}catch(e){}
+  if(!t)t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";
+  document.documentElement.setAttribute("data-theme",t);})();
+
+/* ---------- Sign in + load records from the database ---------- */
+function showLogin(msg){document.body.classList.add("locked");$("login").hidden=false;$("loginMsg").textContent=msg||"";setTimeout(function(){($("lu").value?$("lp"):$("lu")).focus();},30);}
+function hideLogin(){$("login").hidden=true;document.body.classList.remove("locked");}
+$("loginForm").onsubmit=function(e){
+  e.preventDefault();
+  var b=$("loginBtn");b.disabled=true;b.textContent="Signing in…";$("loginMsg").textContent="";
+  api("/api/login",{method:"POST",body:{username:$("lu").value,password:$("lp").value}}).then(function(){
+    $("lp").value="";hideLogin();startApp();
+  }).catch(function(err){
+    $("loginMsg").textContent=err.message;$("lp").value="";$("lp").focus();
+  }).then(function(){b.disabled=false;b.textContent="Sign in";});
+};
+$("logoutBtn").onclick=function(){api("/api/logout",{method:"POST"}).catch(function(){}).then(function(){location.reload();});};
+
+function seedDb(){
+  var offset=0;
+  function step(){
+    return api("/api/seed?offset="+offset,{method:"POST"}).then(function(j){
+      if(j.total)$("results").innerHTML='<div class="empty"><b>First-time setup</b><br>Loading the original records into the secure database… '+Math.round(100*(j.next||0)/j.total)+'%<br><small>This only happens once.</small></div>';
+      if(j.done)return;
+      offset=j.next;return step();
+    });
+  }
+  $("results").innerHTML='<div class="empty"><b>First-time setup</b><br>Loading the original records into the secure database…<br><small>This only happens once.</small></div>';
+  return step();
+}
+function loadAll(){
+  var after=0,n=0,seeded=false;
+  function step(){
+    return api("/api/records?after="+after).then(function(j){
+      if(j.needsSeed){
+        if(seeded)throw new Error("Setup did not finish. Please refresh and try again.");
+        seeded=true;return seedDb().then(function(){after=0;n=0;return step();});
+      }
+      if(j.recs.length)addRecords(j.recs,false,0);
+      n+=j.recs.length;after=j.last;
+      $("count").textContent="Loading… "+n.toLocaleString()+(j.total?" / "+j.total.toLocaleString():"");
+      if(!j.done)return step();
+    });
+  }
+  return step();
+}
+var started=false;
+function startApp(){
+  if(started)return;started=true;
+  $("results").innerHTML='<div class="empty">Loading records…</div>';
+  loadAll().then(function(){buildFilters();refreshSaved();run();}).catch(function(e){
+    started=false;
+    if(e.message!=="auth")$("results").innerHTML='<div class="empty"><b>Could not load the records.</b><br>'+esc(e.message)+'<br><br><button class="btn" onclick="location.reload()">Try again</button></div>';
+  });
+}
+api("/api/me").then(function(){hideLogin();startApp();}).catch(function(){showLogin();});
+</script></body></html>
